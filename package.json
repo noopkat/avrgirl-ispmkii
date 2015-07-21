@@ -1,0 +1,28 @@
+{
+  "name": "avrgirl-ispmkii",
+  "version": "0.0.0",
+  "description": "avrgirl wrapper for flashing chips via the AVRISPmkII programmer",
+  "main": "avrgirl-ispmkii.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noopkat/avrgirl-ispmkii.git"
+  },
+  "keywords": [
+    "avr",
+    "isp",
+    "atmel",
+    "ispmkii",
+    "programmer",
+    "chip",
+    "flash"
+  ],
+  "author": "Suz Hinton",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/noopkat/avrgirl-ispmkii/issues"
+  },
+  "homepage": "https://github.com/noopkat/avrgirl-ispmkii#readme"
+}
