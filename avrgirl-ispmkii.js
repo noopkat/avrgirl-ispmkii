@@ -22,10 +22,12 @@ var wholeMessage = [0x01];
 // this is what you would normally need
 // var wholeMessage = [0x1B, 0xff, messageLen[0], messageLen[1], TOKEN, CMD_SIGN_ON];
 
+// no checksum needed either but here it is anyway
 var checksum = 0;
 for (var i = 0; i < wholeMessage.length; i += 1) {
   checksum ^= wholeMessage[i];
 }
+// don't push as it's not needed
 //wholeMessage.push(checksum);
 var out = new Buffer(wholeMessage);
 
