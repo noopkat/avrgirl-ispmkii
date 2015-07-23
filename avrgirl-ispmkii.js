@@ -32,12 +32,14 @@ var out = new Buffer(wholeMessage);
 
 var device = usb.findByIds(VID, PID);
 device.open();
+var endpointOut = device.interfaces[0].endpoints[1];
+var endpointIn = device.interfaces[0].endpoints[0];
 
 console.log('sending:', wholeMessage);
 
-device.interfaces[0].endpoints[1].transfer(out, function(error) {
+endpointOut.transfer(out, function(error) {
   console.log('transfer error:', error);
-  device.interfaces[0].endpoints[0].transfer(17, function(error, data) {
+  endpointIn.transfer(17, function(error, data) {
     console.log('read error:', error);
     console.log('received data:', data.toString());
     device.close();
