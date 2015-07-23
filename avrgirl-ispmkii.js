@@ -31,6 +31,14 @@ var wholeMessage = [0x01];
 var out = new Buffer(wholeMessage);
 
 var device = usb.findByIds(VID, PID);
+// *shakes fist at OSX*
+(function(__open) { 
+  device.__open = function() {
+    __open.call(this);
+    this.__claimInterface(0);
+  };
+})(device.__open);
+
 device.open();
 var endpointOut = device.interfaces[0].endpoints[1];
 var endpointIn = device.interfaces[0].endpoints[0];
@@ -38,9 +46,9 @@ var endpointIn = device.interfaces[0].endpoints[0];
 console.log('sending:', wholeMessage);
 
 endpointOut.transfer(out, function(error) {
-  if (error) { console.log('transfer error:', error); }
+  if (error) { return console.log('transfer error:', error); }
   endpointIn.transfer(17, function(error, data) {
-    if (error) { console.log('read error:', error); }
+    if (error) { return console.log('read error:', error); }
     console.log('received data: ',  data.toString().replace('\n', ''));
     device.close();
   });
