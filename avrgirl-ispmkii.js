@@ -38,10 +38,10 @@ var endpointIn = device.interfaces[0].endpoints[0];
 console.log('sending:', wholeMessage);
 
 endpointOut.transfer(out, function(error) {
-  console.log('transfer error:', error);
+  if (error) { console.log('transfer error:', error); }
   endpointIn.transfer(17, function(error, data) {
-    console.log('read error:', error);
-    console.log('received data:', data.toString());
+    if (error) { console.log('read error:', error); }
+    console.log('received data: ',  data.toString().replace('\n', ''));
     device.close();
   });
 });
