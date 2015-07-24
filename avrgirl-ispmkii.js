@@ -24,7 +24,7 @@ avrgirlIspmkii.prototype.open = function() {
 };
 
 avrgirlIspmkii.prototype.close = function() {
-  device.close();
+  this.device.close();
 };
 
 avrgirlIspmkii.prototype._setUpInterface = function() {
@@ -40,21 +40,21 @@ avrgirlIspmkii.prototype._write = function (buffer, callback) {
     }
     var buffer = new Buffer(buffer);
   }
-  endpointOut.transfer(buffer, function (error) {
+  this.endpointOut.transfer(buffer, function (error) {
     callback(error);
   });
 };
 
 avrgirlIspmkii.prototype._read = function (length, callback) {
   if (typeof length !== 'number') { return new Error('Failed to read: length must be a number.'); }
-  endpointIn.transfer(length, function (error, data) {
+  this.endpointIn.transfer(length, function (error, data) {
     callback(error, data);
   });
 };
 
 avrgirlIspmkii.prototype.getSignature = function (callback) {
   var self = this;
-  var cmd = this.C.CMD_SIGN_ON;
+  var cmd = C.CMD_SIGN_ON;
   var length = 17;
 
   this._write(cmd, function (error) {
@@ -67,7 +67,7 @@ avrgirlIspmkii.prototype.getSignature = function (callback) {
 
 avrgirlIspmkii.prototype.verifySignature = function (data, callback) {
   var error = null;
-  if (data[2] === self.C.STATUS_CMD_OK) {
+  if (data[2] === C.STATUS_CMD_OK) {
     var signature = data.slice(2);
     if (signature.toString() !== 'AVRISP_MK2') {
       error = new Error('Failed to verify: programmer signature does not match.');
