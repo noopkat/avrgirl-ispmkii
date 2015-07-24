@@ -59,7 +59,7 @@ avrgirlIspmkii.prototype.getSignature = function (callback) {
 
   this._write(cmd, function (error) {
     if (error) { callback(error); }
-    this._read(length, function (error, data) {
+    self._read(length, function (error, data) {
       callback(error, data);
     });
   })
@@ -127,6 +127,7 @@ avrgirlIspmkii.prototype.loadAddress = function (address, callback) {
 avrgirlIspmkii.prototype.enterProgrammingMode = function (options, callback) {
   // P01
   // options are [timeout, stabDelay, cmdexeDelay, syncLoops, byteDelay, pollValue, pollIndex, cmd1, cmd2, cmd3, cmd4]
+  var self = this;
   var cmd = new Buffer([
     C.CMD_ENTER_PROGMODE_ISP,
     options.timeout, options.stabDelay,
@@ -139,7 +140,7 @@ avrgirlIspmkii.prototype.enterProgrammingMode = function (options, callback) {
 
   this._write(cmd, function (error) {
     if (error) { callback(error); }
-    this._read(2, function (error, data) {
+    self._read(2, function (error, data) {
       if (!error && data.length > 0 && data[1] !== C.STATUS_CMD_OK) {
         var error = new Error('Failed to enter prog mode: programmer return status was not OK.');
       }
