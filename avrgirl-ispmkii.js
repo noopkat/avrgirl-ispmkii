@@ -146,12 +146,25 @@ avrgirlIspmkii.prototype.enterProgrammingMode = function (options, callback) {
       }
       callback(error);
     });
-  })
+  });
 };
 
 avrgirlIspmkii.prototype.exitProgrammingMode = function (predelay, postDelay, callback) {
   // P01
+  var self = this;
+  var cmd = new Buffer([
+    C.CMD_LEAVE_PROGMODE_ISP, predelay, postDelay
+  ]);
 
+  this._write(cmd, function (error) {
+    if (error) { callback(error); }
+    self._read(2, function (error, data) {
+      if (!error && data.length > 0 && data[1] !== C.STATUS_CMD_OK) {
+        var error = new Error('Failed to enter prog mode: programmer return status was not OK.');
+      }
+      callback(error);
+    });
+  });
 };
 
 avrgirlIspmkii.prototype.eraseChip = function (options, callback) {
