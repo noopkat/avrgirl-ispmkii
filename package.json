@@ -27,5 +27,8 @@
   "homepage": "https://github.com/noopkat/avrgirl-ispmkii#readme",
   "dependencies": {
     "usb": "^1.0.6"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0"
   }
 }
