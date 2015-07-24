@@ -67,7 +67,7 @@ avrgirlIspmkii.prototype.getSignature = function (callback) {
 
 avrgirlIspmkii.prototype.verifySignature = function (data, callback) {
   var error = null;
-  if (data[2] === C.STATUS_CMD_OK) {
+  if (data[1] === C.STATUS_CMD_OK) {
     var signature = data.slice(2);
     if (signature.toString() !== 'AVRISP_MK2') {
       error = new Error('Failed to verify: programmer signature does not match.');
