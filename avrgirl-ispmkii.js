@@ -79,6 +79,7 @@ avrgirlIspmkii.prototype.verifySignature = function (data, callback) {
 };
 
 avrgirlIspmkii.prototype.writeFlash = function (options, data, callback) {
+  // P01
   //options are [mode, delay, poll1, poll2]
 };
 
@@ -87,6 +88,7 @@ avrgirlIspmkii.prototype.readFlash = function (length, cmd1, callback) {
 };
 
 avrgirlIspmkii.prototype.writeEeprom = function (options, data, callback) {
+  // P01
   //options are [mode, delay, poll1, poll2]
 };
 
@@ -95,10 +97,12 @@ avrgirlIspmkii.prototype.readEeprom = function (length, cmd1, callback) {
 };
 
 avrgirlIspmkii.prototype.readChipSignature = function (callback) {
+  // P01
 
 };
 
 avrgirlIspmkii.prototype.cmdSpiMulti = function (options, callback) {
+  // P01
   //options are [cmd, numTx, numRx, rxStartAddr, txData]
 };
 
@@ -107,25 +111,30 @@ avrgirlIspmkii.prototype.readFuse = function (length, cmd1, callback) {
 };
 
 avrgirlIspmkii.prototype.setParam = function (param, value, callback) {
+  // P01
 
 };
 
-avrgirlIspmkii.prototype.setParam = function (param, callback) {
+avrgirlIspmkii.prototype.getParam = function (param, callback) {
 
 };
 
 avrgirlIspmkii.prototype.loadAddress = function (address, callback) {
+  // P01
 
 };
 
 avrgirlIspmkii.prototype.enterProgrammingMode = function (options, callback) {
+  // P01
   // options are [timeout, stabDelay, cmdexeDelay, syncLoops, byteDelay, pollValue, pollIndex, cmd1, cmd2, cmd3, cmd4]
 };
 
 avrgirlIspmkii.prototype.exitProgrammingMode = function (predelay, postDelay, callback) {
+  // P01
 
 };
 
 avrgirlIspmkii.prototype.eraseChip = function (options, callback) {
+  // P01
   //options are [eraseDelay, pollMethod, cmd1, cmd2, cmd3, cmd4]
 };
