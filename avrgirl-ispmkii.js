@@ -138,6 +138,7 @@ avrgirlIspmkii.prototype.enterProgrammingMode = function (options, callback) {
     options.cmd3, options.cmd4
   ]);
 
+  // todo: abstract this "send/verify OK status" functionality
   this._write(cmd, function (error) {
     if (error) { callback(error); }
     self._read(2, function (error, data) {
@@ -156,6 +157,7 @@ avrgirlIspmkii.prototype.exitProgrammingMode = function (predelay, postDelay, ca
     C.CMD_LEAVE_PROGMODE_ISP, predelay, postDelay
   ]);
 
+  // todo: abstract this "send/verify OK status" functionality
   this._write(cmd, function (error) {
     if (error) { callback(error); }
     self._read(2, function (error, data) {
