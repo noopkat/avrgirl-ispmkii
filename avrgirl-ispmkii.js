@@ -71,6 +71,19 @@ avrgirlIspmkii.prototype._read = function (length, callback) {
   });
 };
 
+avrgirlIspmkii.prototype._sendCmd = function(cmd, callback) {
+  var self = this;
+  this._write(cmd, function (error) {
+    if (error) { callback(error); }
+    self._read(2, function (error, data) {
+      if (!error && data.length > 0 && data[1] !== C.STATUS_CMD_OK) {
+        var error = new Error('Return status was not OK. Received instead: ' + data.toString('hex'));
+      }
+      callback(error);
+    });
+  });
+};
+
 avrgirlIspmkii.prototype.getSignature = function (callback) {
   var self = this;
   var cmd = new Buffer([C.CMD_SIGN_ON]);
@@ -158,34 +171,22 @@ avrgirlIspmkii.prototype.enterProgrammingMode = function (options, callback) {
     options.pgmEnable[2], options.pgmEnable[3]
   ]);
 
-  // todo: abstract this "send/verify OK status" functionality
-  this._write(cmd, function (error) {
-    if (error) { callback(error); }
-    self._read(2, function (error, data) {
-      if (!error && data.length > 0 && data[1] !== C.STATUS_CMD_OK) {
-        var error = new Error('Failed to enter prog mode: programmer return status was not OK. Received instead: ' + data.toString('hex'));
-      }
-      callback(error);
-    });
+  this._sendCmd(cmd, function (error) {
+    var error = error ? new Error('Failed to enter prog mode: programmer return status was not OK.') : null;
+    callback(error);
   });
 };
 
-avrgirlIspmkii.prototype.exitProgrammingMode = function (predelay, postDelay, callback) {
+avrgirlIspmkii.prototype.exitProgrammingMode = function (preDelay, postDelay, callback) {
   // P01
   var self = this;
   var cmd = new Buffer([
-    C.CMD_LEAVE_PROGMODE_ISP, predelay, postDelay
+    C.CMD_LEAVE_PROGMODE_ISP, preDelay, postDelay
   ]);
 
-  // todo: abstract this "send/verify OK status" functionality
-  this._write(cmd, function (error) {
-    if (error) { callback(error); }
-    self._read(2, function (error, data) {
-      if (!error && data.length > 0 && data[1] !== C.STATUS_CMD_OK) {
-        var error = new Error('Failed to enter prog mode: programmer return status was not OK.');
-      }
-      callback(error);
-    });
+  this._sendCmd(cmd, function (error) {
+    var error = error ? new Error('Failed to leave prog mode: programmer return status was not OK.') : null;
+    callback(error);
   });
 };
 

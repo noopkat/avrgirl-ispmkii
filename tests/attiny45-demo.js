@@ -9,9 +9,9 @@ var attiny45 = {
   byteDelay : 0x00,
   pollIndex : 0x03,
   pollValue : 0x53,
-  predelay  : 0x01,
-  postdelay : 0x01,
-  pollmethod : 0x01,
+  preDelay  : 0x01,
+  postDelay : 0x01,
+  pollMethod : 0x01,
   pgmEnable: [0xAC, 0x53, 0x00, 0x00]
 };
 
@@ -22,12 +22,16 @@ avrgirl.on('ready', function() {
       avrgirl.verifySignature(data, function(error) {
         var status = (error) ? error : 'verified!';
         console.log(status);
-        //avrgirl.close();
         avrgirl.enterProgrammingMode(attiny45, function(error) {
           var status = (error) ? error : 'progamming mode entered';
           console.log(status);
+          avrgirl.exitProgrammingMode(attiny45.preDelay, attiny45.postDelay, function(error) {
+            var status = (error) ? error : 'progamming mode left';
+            console.log(status);
+            avrgirl.close();
+          });
         });
       });
-    }
+    };
   });
 });
