@@ -29,6 +29,7 @@
     "usb": "^1.0.6"
   },
   "devDependencies": {
+    "avr-info": "0.0.4",
     "gulp": "^3.9.0",
     "sinon": "^1.15.4"
   }
