@@ -79,11 +79,7 @@ avrgirlIspmkii.prototype.getSignature = function (callback) {
   this._write(cmd, function (error) {
     if (error) { callback(error); }
     self._read(length, function (error, data) {
-      if (!error) {
-        self.verifySignature(data, function(error) {
-          callback(error);
-        });
-      }
+      callback(error, data);
     });
   })
 };
