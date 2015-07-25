@@ -113,17 +113,18 @@ avrgirlIspmkii.prototype.verifySignature = function (data, callback) {
   callback(error);
 };
 
-avrgirlIspmkii.prototype.loadPage = function (data, callback) {
-  var options = this.options;
+avrgirlIspmkii.prototype.loadPage = function (memType, data, callback) {
   var lMSB = data.length >> 8;
   var lLSB = data.length & 0xFF;
+  var mem = this.options[memType];
+  var cmd = memType === 'flash' ? C.CMD_PROGRAM_FLASH_ISP : C.CMD_PROGRAM_EEPROM_ISP
 
   var cmd = new Buffer([
-    C.CMD_PROGRAM_FLASH_ISP,
+    cmd,
     lMSB, lLSB,
-    options.flash.mode, options.flash.delay,
-    options.flash.cmd[0], options.flash.cmd[1], options.flash.cmd[2],
-    options.flash.poll1, options.flash.poll2
+    mem.mode, mem.delay,
+    mem.cmd[0], mem.cmd[1], mem.cmd[2],
+    mem.poll1, mem.poll2
   ]);
 
   cmd = Buffer.concat([cmd, data]);
@@ -133,12 +134,14 @@ avrgirlIspmkii.prototype.loadPage = function (data, callback) {
   });
 };
 
-avrgirlIspmkii.prototype.writeFlash = function (hex, callback) {
+avrgirlIspmkii.prototype.writeMem = function (memType, hex, callback) {
   var self = this;
   var options = this.options;
   var pageAddress = 0;
   var useAddress;
-  var pageSize = options.flash.pageSize;
+  var pageSize = options[memType].pageSize;
+  var addressOffset = options[memType].addressOffset;
+  console.log('pagesize: ' + pageSize)
   var data;
 
   async.whilst(
@@ -146,12 +149,13 @@ avrgirlIspmkii.prototype.writeFlash = function (hex, callback) {
     function programPage(pagedone) {
       async.series([
         function loadAddress(done) {
-          useAddress = pageAddress >> 1;
-          self.loadAddress(useAddress, done);
+          useAddress = pageAddress >> addressOffset;
+          console.log('use address: ', useAddress)
+          self.loadAddress(memType, useAddress, done);
         },
         function writeToPage(done) {
           data = hex.slice(pageAddress, (hex.length > pageSize ? (pageAddress + pageSize) : hex.length - 1))
-          self.loadPage(data, done);
+          self.loadPage(memType, data, done);
         },
         function calcNextPage(done) {
           pageAddress = pageAddress + data.length;
@@ -203,8 +207,10 @@ avrgirlIspmkii.prototype.getParam = function (param, callback) {
 
 };
 
-avrgirlIspmkii.prototype.loadAddress = function (address, callback) {
-  var msb = (address >> 24) & 0xFF | 0x80;
+avrgirlIspmkii.prototype.loadAddress = function (memType, address, callback) {
+  console.log('loading address ' + address);
+  var dMSB = memType === 'flash' ? 0x80 : 0x00;
+  var msb = (address >> 24) & 0xFF | dMSB;
   var xsb = (address >> 16) & 0xFF;
   var ysb = (address >> 8) & 0xFF;
   var lsb = address & 0xFF;
