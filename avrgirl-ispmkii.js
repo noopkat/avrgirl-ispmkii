@@ -121,6 +121,21 @@ avrgirlIspmkii.prototype.verifyProgrammer = function (callback) {
   });
 };
 
+avrgirlIspmkii.prototype.loadAddress = function (memType, address, callback) {
+  var dMSB = memType === 'flash' ? 0x80 : 0x00;
+  var msb = (address >> 24) & 0xFF | dMSB;
+  var xsb = (address >> 16) & 0xFF;
+  var ysb = (address >> 8) & 0xFF;
+  var lsb = address & 0xFF;
+
+  var cmd = new Buffer([C.CMD_LOAD_ADDRESS, msb, xsb, ysb, lsb]);
+
+  this._sendCmd(cmd, function (error) {
+    var error = error ? new Error('Failed to load address: return status was not OK.') : null;
+    callback(error);
+  });
+};
+
 avrgirlIspmkii.prototype.loadPage = function (memType, data, callback) {
   var lMSB = data.length >> 8;
   var lLSB = data.length & 0xFF;
@@ -178,56 +193,6 @@ avrgirlIspmkii.prototype.writeMem = function (memType, hex, callback) {
   );
 };
 
-avrgirlIspmkii.prototype.readFlash = function (length, cmd1, callback) {
-
-};
-
-avrgirlIspmkii.prototype.writeEeprom = function (options, data, callback) {
-  // P01
-  //options are [mode, delay, poll1, poll2]
-
-};
-
-avrgirlIspmkii.prototype.readEeprom = function (length, cmd1, callback) {
-
-};
-
-avrgirlIspmkii.prototype.readChipSignature = function (callback) {
-  // P01
-};
-
-avrgirlIspmkii.prototype.cmdSpiMulti = function (options, callback) {
-  // P01
-  //options are [cmd, numTx, numRx, rxStartAddr, txData]
-};
-
-avrgirlIspmkii.prototype.readFuse = function (length, cmd1, callback) {
-
-};
-
-avrgirlIspmkii.prototype.setParam = function (param, value, callback) {
-  // P01
-};
-
-avrgirlIspmkii.prototype.getParam = function (param, callback) {
-
-};
-
-avrgirlIspmkii.prototype.loadAddress = function (memType, address, callback) {
-  var dMSB = memType === 'flash' ? 0x80 : 0x00;
-  var msb = (address >> 24) & 0xFF | dMSB;
-  var xsb = (address >> 16) & 0xFF;
-  var ysb = (address >> 8) & 0xFF;
-  var lsb = address & 0xFF;
-
-  var cmd = new Buffer([C.CMD_LOAD_ADDRESS, msb, xsb, ysb, lsb]);
-
-  this._sendCmd(cmd, function (error) {
-    var error = error ? new Error('Failed to load address: return status was not OK.') : null;
-    callback(error);
-  });
-};
-
 avrgirlIspmkii.prototype.enterProgrammingMode = function (callback) {
   var self = this;
   var options = this.options;
@@ -277,6 +242,43 @@ avrgirlIspmkii.prototype.eraseChip = function (callback) {
     var error = error ? new Error('Failed to erase chip: programmer return status was not OK.') : null;
     callback(error);
   });
+};
+
+avrgirlIspmkii.prototype.writeFlash = function (hex, callback) {
+  // optional convenience method
+};
+
+avrgirlIspmkii.prototype.readFlash = function (length, cmd1, callback) {
+  // P02
+};
+
+avrgirlIspmkii.prototype.writeEeprom = function (hex, callback) {
+ // optional convenience method
+};
+
+avrgirlIspmkii.prototype.readEeprom = function (length, cmd1, callback) {
+  // P02
+};
+
+avrgirlIspmkii.prototype.readChipSignature = function (callback) {
+  // P01
+};
+
+avrgirlIspmkii.prototype.cmdSpiMulti = function (options, callback) {
+  // // P02
+  //options are [cmd, numTx, numRx, rxStartAddr, txData]
+};
+
+avrgirlIspmkii.prototype.readFuse = function (length, cmd1, callback) {
+  // P02
+};
+
+avrgirlIspmkii.prototype.setParam = function (param, value, callback) {
+  // P02
+};
+
+avrgirlIspmkii.prototype.getParam = function (param, callback) {
+  // P02
 };
 
 module.exports = avrgirlIspmkii;
