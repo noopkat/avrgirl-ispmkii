@@ -2,9 +2,11 @@ var usb = require('usb');
 var C = require('./lib/c');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
+var async = require('async');
 
-function avrgirlIspmkii() {
+function avrgirlIspmkii(options) {
   var self = this;
+  this.options = options;
   EventEmitter.call(this);
   usb.setDebugLevel(0);
 
@@ -52,13 +54,13 @@ avrgirlIspmkii.prototype._setUpInterface = function(callback) {
 };
 
 avrgirlIspmkii.prototype._write = function (buffer, callback) {
-
   if (!Buffer.isBuffer(buffer)) {
     if (!Array.isArray(buffer)) {
       return callback(new Error('Failed to write: data was not Buffer or Array object.'));
     }
     var buffer = new Buffer(buffer);
   }
+
   this.endpointOut.transfer(buffer, function (error) {
     callback(error);
   });
@@ -111,9 +113,59 @@ avrgirlIspmkii.prototype.verifySignature = function (data, callback) {
   callback(error);
 };
 
-avrgirlIspmkii.prototype.writeFlash = function (options, data, callback) {
-  // P01
-  //options are [mode, delay, poll1, poll2]
+avrgirlIspmkii.prototype.loadPage = function (data, callback) {
+  var options = this.options;
+  var lMSB = data.length >> 8;
+  var lLSB = data.length & 0xFF;
+
+  var cmd = new Buffer([
+    C.CMD_PROGRAM_FLASH_ISP,
+    lMSB, lLSB,
+    options.flash.mode, options.flash.delay,
+    options.flash.cmd[0], options.flash.cmd[1], options.flash.cmd[2],
+    options.flash.poll1, options.flash.poll2
+  ]);
+
+  cmd = Buffer.concat([cmd, data]);
+
+  this._sendCmd(cmd, function (error) {
+    callback(error);
+  });
+};
+
+avrgirlIspmkii.prototype.writeFlash = function (hex, callback) {
+  var self = this;
+  var options = this.options;
+  var pageAddress = 0;
+  var useAddress;
+  var pageSize = options.flash.pageSize;
+  var data;
+
+  async.whilst(
+    function testEndOfFile() { return pageAddress < hex.length; },
+    function programPage(pagedone) {
+      async.series([
+        function loadAddress(done) {
+          useAddress = pageAddress >> 1;
+          self.loadAddress(useAddress, done);
+        },
+        function writeToPage(done) {
+          data = hex.slice(pageAddress, (hex.length > pageSize ? (pageAddress + pageSize) : hex.length - 1))
+          self.loadPage(data, done);
+        },
+        function calcNextPage(done) {
+          pageAddress = pageAddress + data.length;
+          done();
+        }
+      ],
+      function pageIsDone(error) {
+        pagedone(error);
+      });
+    },
+    function(error) {
+      callback(error);
+    }
+  );
 };
 
 avrgirlIspmkii.prototype.readFlash = function (length, cmd1, callback) {
@@ -123,6 +175,7 @@ avrgirlIspmkii.prototype.readFlash = function (length, cmd1, callback) {
 avrgirlIspmkii.prototype.writeEeprom = function (options, data, callback) {
   // P01
   //options are [mode, delay, poll1, poll2]
+
 };
 
 avrgirlIspmkii.prototype.readEeprom = function (length, cmd1, callback) {
@@ -131,7 +184,6 @@ avrgirlIspmkii.prototype.readEeprom = function (length, cmd1, callback) {
 
 avrgirlIspmkii.prototype.readChipSignature = function (callback) {
   // P01
-
 };
 
 avrgirlIspmkii.prototype.cmdSpiMulti = function (options, callback) {
@@ -145,7 +197,6 @@ avrgirlIspmkii.prototype.readFuse = function (length, cmd1, callback) {
 
 avrgirlIspmkii.prototype.setParam = function (param, value, callback) {
   // P01
-
 };
 
 avrgirlIspmkii.prototype.getParam = function (param, callback) {
@@ -153,14 +204,23 @@ avrgirlIspmkii.prototype.getParam = function (param, callback) {
 };
 
 avrgirlIspmkii.prototype.loadAddress = function (address, callback) {
-  // P01
+  var msb = (address >> 24) & 0xFF | 0x80;
+  var xsb = (address >> 16) & 0xFF;
+  var ysb = (address >> 8) & 0xFF;
+  var lsb = address & 0xFF;
 
+  var cmd = new Buffer([C.CMD_LOAD_ADDRESS, msb, xsb, ysb, lsb]);
+
+  this._sendCmd(cmd, function (error) {
+    var error = error ? new Error('Failed to load address: return status was not OK.') : null;
+    callback(error);
+  });
 };
 
-avrgirlIspmkii.prototype.enterProgrammingMode = function (options, callback) {
-  // P01
-  // options are [timeout, stabDelay, cmdexeDelay, syncLoops, byteDelay, pollValue, pollIndex, pgmEnable]
+avrgirlIspmkii.prototype.enterProgrammingMode = function (callback) {
   var self = this;
+  var options = this.options;
+
   var cmd = new Buffer([
     C.CMD_ENTER_PROGMODE_ISP,
     options.timeout, options.stabDelay,
@@ -177,11 +237,12 @@ avrgirlIspmkii.prototype.enterProgrammingMode = function (options, callback) {
   });
 };
 
-avrgirlIspmkii.prototype.exitProgrammingMode = function (preDelay, postDelay, callback) {
-  // P01
+avrgirlIspmkii.prototype.exitProgrammingMode = function (callback) {
   var self = this;
+  var options = this.options;
+
   var cmd = new Buffer([
-    C.CMD_LEAVE_PROGMODE_ISP, preDelay, postDelay
+    C.CMD_LEAVE_PROGMODE_ISP, options.preDelay, options.postDelay
   ]);
 
   this._sendCmd(cmd, function (error) {
@@ -190,9 +251,21 @@ avrgirlIspmkii.prototype.exitProgrammingMode = function (preDelay, postDelay, ca
   });
 };
 
-avrgirlIspmkii.prototype.eraseChip = function (options, callback) {
-  // P01
-  //options are [eraseDelay, pollMethod, cmd1, cmd2, cmd3, cmd4]
+avrgirlIspmkii.prototype.eraseChip = function (callback) {
+  var self = this;
+  var options = this.options;
+
+  var cmd = new Buffer([
+    C.CMD_CHIP_ERASE_ISP,
+    options.erase.delay, options.pollMethod,
+    options.erase.cmd[0], options.erase.cmd[1],
+    options.erase.cmd[2], options.erase.cmd[3]
+  ]);
+
+  this._sendCmd(cmd, function (error) {
+    var error = error ? new Error('Failed to enter prog mode: programmer return status was not OK.') : null;
+    callback(error);
+  });
 };
 
 module.exports = avrgirlIspmkii;
