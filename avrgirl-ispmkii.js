@@ -1,7 +1,11 @@
 var usb = require('usb');
 var C = require('./lib/c');
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
 
 function avrgirlIspmkii() {
+  var self = this;
+  EventEmitter.call(this);
   usb.setDebugLevel(0);
 
   this.VID = 0x03eb;
@@ -10,14 +14,27 @@ function avrgirlIspmkii() {
   this.device = usb.findByIds(this.VID, this.PID);
 
   // *shakes fist at OSX*
-  (function(__open) {
-    device.__open = function() {
+  (function(self, __open) {
+    self.device.__open = function() {
       __open.call(this);
       // injecting this line here to alleviate a bad error later
       this.__claimInterface(0);
     };
-  })(device.__open);
+  })(this, this.device.__open);
+
+  this.open();
+  this._setUpInterface(function(error) {
+    if (!error) {
+      setImmediate(emitReady, self);
+    }
+  });
 };
+
+util.inherits(avrgirlIspmkii, EventEmitter);
+
+function emitReady(self) {
+  self.emit('ready');
+}
 
 avrgirlIspmkii.prototype.open = function() {
   this.device.open();
@@ -27,16 +44,18 @@ avrgirlIspmkii.prototype.close = function() {
   this.device.close();
 };
 
-avrgirlIspmkii.prototype._setUpInterface = function() {
+avrgirlIspmkii.prototype._setUpInterface = function(callback) {
   if (!this.device.interfaces) { return new Error('Failed to set up interfaces: device is not currently open.'); }
   this.endpointOut = this.device.interfaces[0].endpoints[1];
   this.endpointIn = this.device.interfaces[0].endpoints[0];
+  callback(null);
 };
 
 avrgirlIspmkii.prototype._write = function (buffer, callback) {
+
   if (!Buffer.isBuffer(buffer)) {
     if (!Array.isArray(buffer)) {
-      return new Error('Failed to write: data was not Buffer or Array object.');
+      return callback(new Error('Failed to write: data was not Buffer or Array object.'));
     }
     var buffer = new Buffer(buffer);
   }
@@ -173,3 +192,5 @@ avrgirlIspmkii.prototype.eraseChip = function (options, callback) {
   // P01
   //options are [eraseDelay, pollMethod, cmd1, cmd2, cmd3, cmd4]
 };
+
+module.exports = avrgirlIspmkii;
