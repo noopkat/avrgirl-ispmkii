@@ -73,13 +73,17 @@ avrgirlIspmkii.prototype._read = function (length, callback) {
 
 avrgirlIspmkii.prototype.getSignature = function (callback) {
   var self = this;
-  var cmd = C.CMD_SIGN_ON;
+  var cmd = new Buffer([C.CMD_SIGN_ON]);
   var length = 17;
 
   this._write(cmd, function (error) {
     if (error) { callback(error); }
     self._read(length, function (error, data) {
-      callback(error, data);
+      if (!error) {
+        self.verifySignature(data, function(error) {
+          callback(error);
+        });
+      }
     });
   })
 };
@@ -88,7 +92,8 @@ avrgirlIspmkii.prototype.verifySignature = function (data, callback) {
   var error = null;
   if (data[1] === C.STATUS_CMD_OK) {
     var signature = data.slice(2);
-    if (signature.toString() !== 'AVRISP_MK2') {
+    console.log(signature.toString())
+    if (signature.toString().trim() !== 'AVRISP_MK2') {
       error = new Error('Failed to verify: programmer signature does not match.');
     }
   } else {
