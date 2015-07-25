@@ -18,11 +18,12 @@ var attiny45 = {
   pgmEnable: [0xAC, 0x53, 0x00, 0x00],
   flash: {
     paged: true,
-    mode: 0xc1,
+    mode: 0xC1,
     delay: 6,
     size: 4096,
     pageSize: 64,
     pages: 64,
+    addressOffset: 1,
     minWriteDelay: 4500,
     maxWriteDelay: 4500,
     cmd: [0x40, 0x4C, 0x20],
@@ -33,10 +34,13 @@ var attiny45 = {
     size: 256,
     pageSize: 4,
     pages: 64,
-    mode: 0x41,
+    addressOffset: 0,
+    mode: 0xC1,
     delay: 6,
-    cmd: [0xC0, 0x00, 0x00],
-    readCmd: [0xA0, 0x00, 0x00]
+    cmd: [0xC1, 0xC2, 0xA0],
+    readCmd: [0xA0, 0x00, 0x00],
+    poll1: 0xFF,
+    poll2: 0xFF
   },
   erase: {
     delay: 6,
@@ -47,7 +51,9 @@ var attiny45 = {
 var avrgirl = new AvrgirlIspmkii(attiny45);
 
 var pr = fs.readFileSync(__dirname + '/pr.hex', {encoding: 'utf8'});
+var ee = fs.readFileSync(__dirname + '/eeprom.hex', {encoding: 'utf8'});
 var prBin = intelhex.parse(pr).data;
+var eeBin = intelhex.parse(ee).data;
 
 // PYRAMID OF DOOOOOOOOOOOOOOOOOOM
 // (fix this eventually)
@@ -62,16 +68,18 @@ avrgirl.on('ready', function() {
           var status = (error) ? error : 'progamming mode entered';
           console.log(status);
           avrgirl.eraseChip(function(error) {
-            avrgirl.writeFlash(prBin, function(error) {
-              var status = (error) ? error : 'flash complete';
-              console.log(status);
-              avrgirl.exitProgrammingMode(function(error) {
-                var status = (error) ? error : 'progamming mode left';
+            avrgirl.writeMem('flash', prBin, function(error) {
+              avrgirl.writeMem('eeprom', eeBin, function(error) {
+                var status = (error) ? error : 'flash complete';
                 console.log(status);
-                avrgirl.close();
+                avrgirl.exitProgrammingMode(function(error) {
+                  var status = (error) ? error : 'progamming mode left';
+                  console.log(status);
+                  avrgirl.close();
+                });
               });
             });
-          });
+         });
         });
       });
     };
