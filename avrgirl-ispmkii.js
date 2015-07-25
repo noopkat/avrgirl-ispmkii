@@ -96,14 +96,13 @@ avrgirlIspmkii.prototype.getSignature = function (callback) {
     self._read(length, function (error, data) {
       callback(error, data);
     });
-  })
+  });
 };
 
 avrgirlIspmkii.prototype.verifySignature = function (data, callback) {
   var error = null;
   if (data[1] === C.STATUS_CMD_OK) {
     var signature = data.slice(2);
-    console.log(signature.toString())
     if (signature.toString().trim() !== 'AVRISP_MK2') {
       error = new Error('Failed to verify: programmer signature does not match.');
     }
@@ -111,6 +110,15 @@ avrgirlIspmkii.prototype.verifySignature = function (data, callback) {
     error = new Error('Failed to verify: programmer return status was not OK.');
   }
   callback(error);
+};
+
+avrgirlIspmkii.prototype.verifyProgrammer = function (callback) {
+  var self = this;
+  this.getSignature(function (error, data) {
+    self.verifySignature(data, function(error) {
+      callback(error);
+    });
+  });
 };
 
 avrgirlIspmkii.prototype.loadPage = function (memType, data, callback) {
@@ -141,7 +149,6 @@ avrgirlIspmkii.prototype.writeMem = function (memType, hex, callback) {
   var useAddress;
   var pageSize = options[memType].pageSize;
   var addressOffset = options[memType].addressOffset;
-  console.log('pagesize: ' + pageSize)
   var data;
 
   async.whilst(
@@ -150,7 +157,6 @@ avrgirlIspmkii.prototype.writeMem = function (memType, hex, callback) {
       async.series([
         function loadAddress(done) {
           useAddress = pageAddress >> addressOffset;
-          console.log('use address: ', useAddress)
           self.loadAddress(memType, useAddress, done);
         },
         function writeToPage(done) {
@@ -208,7 +214,6 @@ avrgirlIspmkii.prototype.getParam = function (param, callback) {
 };
 
 avrgirlIspmkii.prototype.loadAddress = function (memType, address, callback) {
-  console.log('loading address ' + address);
   var dMSB = memType === 'flash' ? 0x80 : 0x00;
   var msb = (address >> 24) & 0xFF | dMSB;
   var xsb = (address >> 16) & 0xFF;
@@ -269,7 +274,7 @@ avrgirlIspmkii.prototype.eraseChip = function (callback) {
   ]);
 
   this._sendCmd(cmd, function (error) {
-    var error = error ? new Error('Failed to enter prog mode: programmer return status was not OK.') : null;
+    var error = error ? new Error('Failed to erase chip: programmer return status was not OK.') : null;
     callback(error);
   });
 };
