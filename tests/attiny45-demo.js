@@ -29,6 +29,15 @@ var attiny45 = {
     poll1: 0xFF,
     poll2: 0xFF
   },
+  eeprom: {
+    size: 256,
+    pageSize: 4,
+    pages: 64,
+    mode: 0x41,
+    delay: 6,
+    cmd: [0xC0, 0x00, 0x00],
+    readCmd: [0xA0, 0x00, 0x00]
+  },
   erase: {
     delay: 6,
     cmd: [0xAC, 0x80, 0x00, 0x00]
