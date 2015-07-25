@@ -146,7 +146,7 @@ avrgirlIspmkii.prototype.loadAddress = function (address, callback) {
 
 avrgirlIspmkii.prototype.enterProgrammingMode = function (options, callback) {
   // P01
-  // options are [timeout, stabDelay, cmdexeDelay, syncLoops, byteDelay, pollValue, pollIndex, cmd1, cmd2, cmd3, cmd4]
+  // options are [timeout, stabDelay, cmdexeDelay, syncLoops, byteDelay, pollValue, pollIndex, pgmEnable]
   var self = this;
   var cmd = new Buffer([
     C.CMD_ENTER_PROGMODE_ISP,
@@ -154,8 +154,8 @@ avrgirlIspmkii.prototype.enterProgrammingMode = function (options, callback) {
     options.cmdexeDelay, options.syncLoops,
     options.byteDelay,
     options.pollValue, options.pollIndex,
-    options.cmd1, options.cmd2,
-    options.cmd3, options.cmd4
+    options.pgmEnable[0], options.pgmEnable[1],
+    options.pgmEnable[2], options.pgmEnable[3]
   ]);
 
   // todo: abstract this "send/verify OK status" functionality
@@ -163,7 +163,7 @@ avrgirlIspmkii.prototype.enterProgrammingMode = function (options, callback) {
     if (error) { callback(error); }
     self._read(2, function (error, data) {
       if (!error && data.length > 0 && data[1] !== C.STATUS_CMD_OK) {
-        var error = new Error('Failed to enter prog mode: programmer return status was not OK.');
+        var error = new Error('Failed to enter prog mode: programmer return status was not OK. Received instead: ' + data.toString('hex'));
       }
       callback(error);
     });
