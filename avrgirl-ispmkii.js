@@ -257,7 +257,21 @@ avrgirlIspmkii.prototype.readFlash = function (length, cmd1, callback) {
 };
 
 avrgirlIspmkii.prototype.readEeprom = function (length, cmd1, callback) {
-  // P02
+  var self = this;
+  var cmd = new Buffer([
+    C.CMD_READ_EEPROM_ISP,
+    length >> 8, length,
+    cmd1
+  ]);
+
+  this._write(cmd, function (error) {
+    var error = error ? new Error('Failed to initiate read eeprom: programmer return status was not OK.') : null;
+    if (error) { return callback(error, null); }
+    self._read(length + 3, function(error, data) {
+      var error = error ? new Error('Failed to read eeprom: programmer return status was not OK.') : null;
+      callback(error, data);
+    });
+  });
 };
 
 avrgirlIspmkii.prototype.readChipSignature = function (callback) {
