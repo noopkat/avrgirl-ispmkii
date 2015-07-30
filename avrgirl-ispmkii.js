@@ -305,9 +305,6 @@ avrgirlIspmkii.prototype.readFuse = function (length, cmd1, callback) {
 };
 
 avrgirlIspmkii.prototype.setParameter = function (param, value, callback) {
-  var self = this;
-  var options = this.options;
-
   var cmd = new Buffer([
     C.CMD_GET_PARAMETER,
     param, value
@@ -321,8 +318,6 @@ avrgirlIspmkii.prototype.setParameter = function (param, value, callback) {
 
 avrgirlIspmkii.prototype.getParameter = function (param, callback) {
   var self = this;
-  var options = this.options;
-
   var cmd = new Buffer([
     C.CMD_GET_PARAMETER,
     param
@@ -332,7 +327,7 @@ avrgirlIspmkii.prototype.getParameter = function (param, callback) {
     var error = error ? new Error('Failed to get parameter: programmer return status was not OK.') : null;
     if (error) { return callback(error, null); }
     self._read(8, function(error, data) {
-      error = error ? new Error('Failed to get parameter: programmer return status was not OK.') : null;
+      var error = error ? new Error('Failed to get parameter: programmer return status was not OK.') : null;
       callback(error, data);
     });
   });
