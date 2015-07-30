@@ -261,7 +261,39 @@ avrgirlIspmkii.prototype.readEeprom = function (length, cmd1, callback) {
 };
 
 avrgirlIspmkii.prototype.readChipSignature = function (callback) {
-  // P01
+  var self = this;
+  var options = this.options;
+  var readLen = options.signature.length;
+  var set = 0;
+
+  var cmd = new Buffer([
+    C.CMD_READ_SIGNATURE_ISP,
+    options.readSignature.startAddress,
+    options.readSignature.cmd[0], options.readSignature.cmd[1],
+    options.readSignature.cmd[2], options.readSignature.cmd[3]
+  ]);
+
+  var response = new Buffer(3);
+
+  function getSigByte() {
+    self._write(cmd, function (error) {
+      if (error) { callback(error); }
+      self._read(8, function(error, data) {
+        if (error) { callback(error); }
+        response[set] = data[2];
+        set += 1;
+        cmd[4] = set;
+        if (set < 3) {
+          getSigByte();
+        } else {
+          callback(null, response);
+        }
+      });
+    });
+  };
+
+  getSigByte();
+
 };
 
 avrgirlIspmkii.prototype.cmdSpiMulti = function (options, callback) {
