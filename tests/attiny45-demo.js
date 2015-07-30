@@ -2,6 +2,7 @@ var AvrgirlIspmkii = require('../avrgirl-ispmkii');
 var intelhex = require('intel-hex');
 var fs = require('fs');
 var async = require('async');
+var C  = require('../lib/c');
 
 var attiny45 = {
   signature: [0x1E, 0x92, 0x06],

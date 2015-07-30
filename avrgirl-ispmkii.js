@@ -248,12 +248,12 @@ avrgirlIspmkii.prototype.writeFlash = function (hex, callback) {
   // optional convenience method
 };
 
-avrgirlIspmkii.prototype.readFlash = function (length, cmd1, callback) {
-  // P02
-};
-
 avrgirlIspmkii.prototype.writeEeprom = function (hex, callback) {
  // optional convenience method
+};
+
+avrgirlIspmkii.prototype.readFlash = function (length, cmd1, callback) {
+  // P02
 };
 
 avrgirlIspmkii.prototype.readEeprom = function (length, cmd1, callback) {
@@ -263,7 +263,6 @@ avrgirlIspmkii.prototype.readEeprom = function (length, cmd1, callback) {
 avrgirlIspmkii.prototype.readChipSignature = function (callback) {
   var self = this;
   var options = this.options;
-  var readLen = options.signature.length;
   var set = 0;
 
   var cmd = new Buffer([
@@ -305,12 +304,38 @@ avrgirlIspmkii.prototype.readFuse = function (length, cmd1, callback) {
   // P02
 };
 
-avrgirlIspmkii.prototype.setParam = function (param, value, callback) {
-  // P02
+avrgirlIspmkii.prototype.setParameter = function (param, value, callback) {
+  var self = this;
+  var options = this.options;
+
+  var cmd = new Buffer([
+    C.CMD_GET_PARAMETER,
+    param, value
+  ]);
+
+  this._sendCmd(cmd, function (error) {
+    var error = error ? new Error('Failed to set parameter: programmer return status was not OK.') : null;
+    callback(error);
+  });
 };
 
-avrgirlIspmkii.prototype.getParam = function (param, callback) {
-  // P02
+avrgirlIspmkii.prototype.getParameter = function (param, callback) {
+  var self = this;
+  var options = this.options;
+
+  var cmd = new Buffer([
+    C.CMD_GET_PARAMETER,
+    param
+  ]);
+
+  this._write(cmd, function (error) {
+    var error = error ? new Error('Failed to get parameter: programmer return status was not OK.') : null;
+    if (error) { return callback(error, null); }
+    self._read(8, function(error, data) {
+      error = error ? new Error('Failed to get parameter: programmer return status was not OK.') : null;
+      callback(error, data);
+    });
+  });
 };
 
 module.exports = avrgirlIspmkii;
