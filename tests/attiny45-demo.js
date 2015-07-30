@@ -4,16 +4,17 @@ var fs = require('fs');
 var async = require('async');
 
 var attiny45 = {
-  timeout : 0xC8,
-  stabDelay : 0x64,
-  cmdexeDelay : 0x19,
-  syncLoops  : 0x20,
-  byteDelay : 0x00,
-  pollIndex : 0x03,
-  pollValue : 0x53,
-  preDelay  : 0x01,
-  postDelay : 0x01,
-  pollMethod : 0x01,
+  signature: [0x1E, 0x92, 0x06],
+  timeout: 0xC8,
+  stabDelay: 0x64,
+  cmdexeDelay: 0x19,
+  syncLoops: 0x20,
+  byteDelay: 0x00,
+  pollIndex: 0x03,
+  pollValue: 0x53,
+  preDelay: 0x01,
+  postDelay: 0x01,
+  pollMethod: 0x01,
   poll1: 0x00,
   poll2: 0x00,
   pgmEnable: [0xAC, 0x53, 0x00, 0x00],
@@ -46,6 +47,10 @@ var attiny45 = {
   erase: {
     delay: 10,
     cmd: [0xAC, 0x80, 0x00, 0x00]
+  },
+  readSignature: {
+    startAddress: 0x00,
+    cmd: [0x30, 0x00, 0x00, 0x00]
   }
 };
 
@@ -57,9 +62,16 @@ var prBin = intelhex.parse(pr).data;
 var eeBin = intelhex.parse(ee).data;
 
 avrgirl.on('ready', function() {
+  // run demos
   async.series([
     avrgirl.verifyProgrammer.bind(avrgirl),
     avrgirl.enterProgrammingMode.bind(avrgirl),
+    function hi (callback) {
+      avrgirl.readChipSignature(function(error, data) {
+        console.log('signature response read:' , data);
+        callback();
+      });
+    },
     avrgirl.eraseChip.bind(avrgirl),
     avrgirl.writeMem.bind(avrgirl, 'flash', prBin),
     avrgirl.writeMem.bind(avrgirl, 'eeprom', eeBin),
