@@ -30,6 +30,7 @@ var attiny45 = {
     minWriteDelay: 4500,
     maxWriteDelay: 4500,
     cmd: [0x40, 0x4C, 0x20],
+    readCmd: [0x20, 0x00, 0x00],
     poll1: 0xFF,
     poll2: 0xFF
   },
