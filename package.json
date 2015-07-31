@@ -27,12 +27,12 @@
   "homepage": "https://github.com/noopkat/avrgirl-ispmkii#readme",
   "dependencies": {
     "async": "^1.4.0",
+    "intel-hex": "^0.1.1",
     "usb": "^1.0.6"
   },
   "devDependencies": {
-    "avr-info": "0.0.4",
     "gulp": "^3.9.0",
-    "intel-hex": "^0.1.1",
-    "sinon": "^1.15.4"
+    "sinon": "^1.15.4",
+    "tape": "^4.0.1"
   }
 }
