@@ -82,6 +82,12 @@ avrgirl.on('ready', function() {
         callback();
       });
     },
+    function hifuses (callback) {
+      avrgirl.readFuses(function(error, data) {
+        console.log('fuse response read:' , data);
+        callback();
+      });
+    },
     function readeeprom (callback) {
       avrgirl.readEeprom(0x04, 0xA0, function(error, data) {
         console.log('eeprom response read:', error, data.toString('hex'));
