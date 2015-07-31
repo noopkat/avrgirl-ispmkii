@@ -146,7 +146,7 @@ avrgirlIspmkii.prototype.loadPage = function (memType, data, callback) {
     cmd,
     lMSB, lLSB,
     mem.mode, mem.delay,
-    mem.cmd[0], mem.cmd[1], mem.cmd[2],
+    mem.write[0], mem.write[1], mem.write[2],
     mem.poll1, mem.poll2
   ]);
 
@@ -196,6 +196,7 @@ avrgirlIspmkii.prototype.writeMem = function (memType, hex, callback) {
 avrgirlIspmkii.prototype.enterProgrammingMode = function (callback) {
   var self = this;
   var options = this.options;
+  var enable = options.pgmEnable;
 
   var cmd = new Buffer([
     C.CMD_ENTER_PROGMODE_ISP,
@@ -203,8 +204,8 @@ avrgirlIspmkii.prototype.enterProgrammingMode = function (callback) {
     options.cmdexeDelay, options.syncLoops,
     options.byteDelay,
     options.pollValue, options.pollIndex,
-    options.pgmEnable[0], options.pgmEnable[1],
-    options.pgmEnable[2], options.pgmEnable[3]
+    enable[0], enable[1],
+    enable[2], enable[3]
   ]);
 
   this._sendCmd(cmd, function (error) {
@@ -230,12 +231,13 @@ avrgirlIspmkii.prototype.exitProgrammingMode = function (callback) {
 avrgirlIspmkii.prototype.eraseChip = function (callback) {
   var self = this;
   var options = this.options;
+  var erase = options.erase;
 
   var cmd = new Buffer([
     C.CMD_CHIP_ERASE_ISP,
-    options.erase.delay, options.pollMethod,
-    options.erase.cmd[0], options.erase.cmd[1],
-    options.erase.cmd[2], options.erase.cmd[3]
+    erase.delay, options.pollMethod,
+    erase.cmd[0], erase.cmd[1],
+    erase.cmd[2], erase.cmd[3]
   ]);
 
   this._sendCmd(cmd, function (error) {
@@ -252,12 +254,13 @@ avrgirlIspmkii.prototype.writeEeprom = function (hex, callback) {
  // optional convenience method
 };
 
-avrgirlIspmkii.prototype.readFlash = function (length, cmd1, callback) {
+avrgirlIspmkii.prototype.readFlash = function (length, callback) {
   var self = this;
+  var options = this.options;
   var cmd = new Buffer([
     C.CMD_READ_FLASH_ISP,
     length >> 8, length,
-    cmd1
+    options.flash.read[0]
   ]);
 
   this._write(cmd, function (error) {
@@ -270,12 +273,13 @@ avrgirlIspmkii.prototype.readFlash = function (length, cmd1, callback) {
   });
 };
 
-avrgirlIspmkii.prototype.readEeprom = function (length, cmd1, callback) {
+avrgirlIspmkii.prototype.readEeprom = function (length, callback) {
   var self = this;
+  var options = this.options;
   var cmd = new Buffer([
     C.CMD_READ_EEPROM_ISP,
     length >> 8, length,
-    cmd1
+    options.eeprom.read[0]
   ]);
 
   this._write(cmd, function (error) {
@@ -291,13 +295,14 @@ avrgirlIspmkii.prototype.readEeprom = function (length, cmd1, callback) {
 avrgirlIspmkii.prototype.readChipSignature = function (callback) {
   var self = this;
   var options = this.options;
+  var signature = options.signature;
   var set = 0;
 
   var cmd = new Buffer([
     C.CMD_READ_SIGNATURE_ISP,
-    options.readSignature.startAddress,
-    options.readSignature.cmd[0], options.readSignature.cmd[1],
-    options.readSignature.cmd[2], options.readSignature.cmd[3]
+    signature.startAddress,
+    signature.read[0], signature.read[1],
+    signature.read[2], signature.read[3]
   ]);
 
   var response = new Buffer(3);
@@ -360,7 +365,7 @@ avrgirlIspmkii.prototype.readFuses = function (callback) {
   };
 
   getFuseByte();
- 
+
 };
 
 avrgirlIspmkii.prototype.setParameter = function (param, value, callback) {

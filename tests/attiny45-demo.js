@@ -27,22 +27,21 @@ var attiny45 = {
     pageSize: 64,
     pages: 64,
     addressOffset: 1,
-    minWriteDelay: 4500,
-    maxWriteDelay: 4500,
-    cmd: [0x40, 0x4C, 0x20],
-    readCmd: [0x20, 0x00, 0x00],
+    write: [0x40, 0x4C, 0x20],
+    read: [0x20, 0x00, 0x00],
     poll1: 0xFF,
     poll2: 0xFF
   },
   eeprom: {
+    pages: true,
+    mode: 0xC1,
+    delay: 6,
     size: 256,
     pageSize: 4,
     pages: 64,
     addressOffset: 0,
-    mode: 0xC1,
-    delay: 6,
-    cmd: [0xC1, 0xC2, 0xA0],
-    readCmd: [0xA0, 0x00, 0x00],
+    write: [0xC1, 0xC2, 0xA0],
+    read: [0xA0, 0x00, 0x00],
     poll1: 0xFF,
     poll2: 0xFF
   },
@@ -50,12 +49,17 @@ var attiny45 = {
     delay: 10,
     cmd: [0xAC, 0x80, 0x00, 0x00]
   },
-  readSignature: {
+  signature: {
     startAddress: 0x00,
-    cmd: [0x30, 0x00, 0x00, 0x00]
+    read: [0x30, 0x00, 0x00, 0x00]
   },
   fuses: {
     startAddress: 0x00,
+    write: {
+      low: [0xAC, 0xA0, 0x00, 0x00],
+      high: [0xAC, 0xA8, 0x00, 0x00],
+      ext: [0xAC, 0xA4, 0x00, 0x00]
+    },
     read: {
       low: [0x50, 0x00, 0x00, 0x00],
       high: [0x58, 0x08, 0x00, 0x00],
@@ -89,8 +93,14 @@ avrgirl.on('ready', function() {
       });
     },
     function readeeprom (callback) {
-      avrgirl.readEeprom(0x04, 0xA0, function(error, data) {
+      avrgirl.readEeprom(0x04, function(error, data) {
         console.log('eeprom response read:', error, data.toString('hex'));
+        callback();
+      });
+    },
+    function readflash (callback) {
+      avrgirl.readFlash(0x04, function(error, data) {
+        console.log('flash response read:', error, data.toString('hex'));
         callback();
       });
     },
