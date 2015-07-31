@@ -328,8 +328,39 @@ avrgirlIspmkii.prototype.cmdSpiMulti = function (options, callback) {
   //options are [cmd, numTx, numRx, rxStartAddr, txData]
 };
 
-avrgirlIspmkii.prototype.readFuse = function (length, cmd1, callback) {
-  // P02
+avrgirlIspmkii.prototype.readFuses = function (callback) {
+  var self = this;
+  var options = this.options;
+  var set = 0;
+  var reads = ['low', 'high', 'ext'];
+
+  var cmd = new Buffer([
+    C.CMD_READ_FUSE_ISP,
+    options.fuses.startAddress
+  ]);
+
+  var cmdf = Buffer.concat([cmd, new Buffer(options.fuses.read[reads[0]])], 6);
+  var response = new Buffer(3);
+
+  function getFuseByte() {
+    self._write(cmdf, function (error) {
+      if (error) { callback(error); }
+      self._read(4, function(error, data) {
+        if (error) { callback(error); }
+        response[set] = data[2];
+        set += 1;
+        if (set < 3) {
+          cmdf = Buffer.concat([cmd, new Buffer(options.fuses.read[reads[set]])], 6);
+          getFuseByte();
+        } else {
+          callback(null, response);
+        }
+      });
+    });
+  };
+
+  getFuseByte();
+ 
 };
 
 avrgirlIspmkii.prototype.setParameter = function (param, value, callback) {
