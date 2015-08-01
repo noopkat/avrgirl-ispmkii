@@ -1,8 +1,10 @@
 // set up mock usb module for tests
 
-function usb() {};
+var usb = {};
 
-usb.prototype.findByIds = function (vid, pid) {
+usb.setDebugLevel = function() {};
+
+usb.findByIds = function (vid, pid) {
   return {
     interfaces: [
       {
@@ -19,11 +21,11 @@ usb.prototype.findByIds = function (vid, pid) {
             }
           }
         ]
-      },
-       __open: function() {},
-      open: function() {},
-      close: function() {}
-    ]
+      }
+    ],
+     __open: function() {},
+    open: function() {},
+    close: function() {},
   }
 };
 
