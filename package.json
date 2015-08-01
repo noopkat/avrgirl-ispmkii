@@ -4,7 +4,7 @@
   "description": "avrgirl wrapper for flashing chips via the AVRISPmkII programmer",
   "main": "avrgirl-ispmkii.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tape ./tests/*.spec.js | tap-spec"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,11 @@
   },
   "devDependencies": {
     "gulp": "^3.9.0",
+    "gulp-jslint": "^0.2.2",
+    "gulp-tape": "0.0.1",
+    "proxyquire": "^1.6.0",
     "sinon": "^1.15.4",
+    "tap-spec": "^4.0.2",
     "tape": "^4.0.1"
   }
 }
