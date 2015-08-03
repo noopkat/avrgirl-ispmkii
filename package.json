@@ -27,13 +27,11 @@
   "homepage": "https://github.com/noopkat/avrgirl-ispmkii#readme",
   "dependencies": {
     "async": "^1.4.0",
+    "avrgirl-stk500v2": "git://github.com/noopkat/avrgirl-stk500v2",
     "intel-hex": "^0.1.1",
     "usb": "^1.0.6"
   },
   "devDependencies": {
-    "gulp": "^3.9.0",
-    "gulp-jslint": "^0.2.2",
-    "gulp-tape": "0.0.1",
     "proxyquire": "^1.6.0",
     "sinon": "^1.15.4",
     "tap-spec": "^4.0.2",

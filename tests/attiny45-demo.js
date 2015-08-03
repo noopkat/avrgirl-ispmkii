@@ -2,7 +2,6 @@ var AvrgirlIspmkii = require('../avrgirl-ispmkii');
 var intelhex = require('intel-hex');
 var fs = require('fs');
 var async = require('async');
-var C  = require('../lib/c');
 
 var attiny45 = require('./attiny45');
 
@@ -16,10 +15,10 @@ var eeBin = intelhex.parse(ee).data;
 avrgirl.on('ready', function() {
   // run demos
   async.series([
-    avrgirl.verifyProgrammer.bind(avrgirl),
+    //avrgirl.verifyProgrammer.bind(avrgirl),
     avrgirl.enterProgrammingMode.bind(avrgirl),
     function hi (callback) {
-      avrgirl.readChipSignature(function(error, data) {
+      avrgirl.getChipSignature(function(error, data) {
         console.log('signature response read:' , data);
         callback();
       });
