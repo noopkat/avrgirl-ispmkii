@@ -11,11 +11,12 @@ var pr = fs.readFileSync(__dirname + '/hex/pr.hex', {encoding: 'utf8'});
 var ee = fs.readFileSync(__dirname + '/hex/eeprom.hex', {encoding: 'utf8'});
 var prBin = intelhex.parse(pr).data;
 var eeBin = intelhex.parse(ee).data;
+var sig = new Buffer('AVRISP_MK2');
 
 avrgirl.on('ready', function() {
   // run demos
   async.series([
-    //avrgirl.verifyProgrammer.bind(avrgirl),
+    avrgirl.verifyProgrammer.bind(avrgirl, sig),
     avrgirl.enterProgrammingMode.bind(avrgirl),
     function hi (callback) {
       avrgirl.getChipSignature(function(error, data) {

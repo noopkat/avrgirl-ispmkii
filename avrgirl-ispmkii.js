@@ -26,6 +26,14 @@ function avrgirlIspmkii(chip) {
 
 util.inherits(avrgirlIspmkii, stk500v2);
 
-// this.prototype.verifyProgrammer = function(signature) {};
+avrgirlIspmkii.prototype.verifyProgrammer = function (sig, callback) {
+  var self = this;
+
+  this.getSignature(function (error, data) {
+    self.verifySignature(sig, data, function(error) {
+      callback(error);
+    });
+  });
+};
 
 module.exports = avrgirlIspmkii;
