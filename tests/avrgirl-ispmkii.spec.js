@@ -4,7 +4,7 @@ var test = require('tape');
 var sinon = require('sinon');
 var proxyquire = require('proxyquire');
 var chip = require('./helpers/mock-chip');
-var usbmock = require('./helpers/mock-usb');
+var usbmock = require('mock-usb');
 // module to test
 var avrgirl = proxyquire.noCallThru().load('../avrgirl-ispmkii', { 'usb': usbmock });
 

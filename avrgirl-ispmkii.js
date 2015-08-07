@@ -19,7 +19,7 @@ function avrgirlIspmkii(chip) {
 
   var options = {
     chip: chip,
-    debug: true,
+    debug: false,
     comm: device,
     frameless: true
   };
