@@ -8,6 +8,7 @@ node_js:
   - "iojs-v1.0.4"
 
 before_install:
+- sudo apt-get update
 - sudo apt-get install build-essential libudev-dev
 
 before_script:
