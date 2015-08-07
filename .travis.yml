@@ -1,4 +1,5 @@
 language: node_js
+sudo: required
 node_js:
   - "0.12"
   - "0.11"
@@ -7,7 +8,7 @@ node_js:
   - "iojs-v1.0.4"
 
 before_install:
-- apt-get install build-essential libudev-dev
+- sudo apt-get install build-essential libudev-dev
 
 before_script:
 - npm install -g istanbul
