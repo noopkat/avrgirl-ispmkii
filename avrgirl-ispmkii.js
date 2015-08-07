@@ -1,7 +1,7 @@
-var usb = require('usb');
 var util = require('util');
 var async = require('async');
 var stk500v2 = require('avrgirl-stk500v2');
+var usb = require('usb');
 
 function avrgirlIspmkii(chip) {
   var self = this;

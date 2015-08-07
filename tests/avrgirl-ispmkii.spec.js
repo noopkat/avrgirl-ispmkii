@@ -6,7 +6,7 @@ var proxyquire = require('proxyquire');
 var chip = require('./helpers/mock-chip');
 var usbmock = require('./helpers/mock-usb');
 // module to test
-var avrgirl = proxyquire('../avrgirl-ispmkii', { 'usb': usbmock });
+var avrgirl = proxyquire.noCallThru().load('../avrgirl-ispmkii', { 'usb': usbmock });
 
 // test options to pass in to most tests
 var FLoptions = {
