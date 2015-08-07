@@ -13,6 +13,10 @@ function avrgirlIspmkii(chip) {
 
   var device = usb.findByIds(VID, PID);
 
+  if (!device) {
+    return new Error('Could not find a connected AVRISP mkii device.');
+  }
+
   var options = {
     chip: chip,
     debug: true,
