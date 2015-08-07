@@ -11,6 +11,8 @@ addons:
     packages:
     - build-essential
     - libudev-dev
+    - usbutils
+    - lsusb
 
 before_script:
 - npm install -g istanbul
