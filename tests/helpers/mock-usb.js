@@ -14,12 +14,14 @@ usb.findByIds = function (vid, pid) {
     this.interfaces.push({
       endpoints: [
         {
+          direction: 'in',
           transfer: function (length, callback) {
             var buffer = new Buffer(length);
             return callback(null, buffer);
           }
         },
         {
+          direction: 'out',
           transfer: function (buffer, callback) {
             return callback(null);
           }
@@ -27,7 +29,7 @@ usb.findByIds = function (vid, pid) {
       ]
     });
   };
-  this.close = function() {
+  device.close = function() {
     device.interfaces = [];
   };
   return device;

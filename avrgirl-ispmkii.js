@@ -20,16 +20,18 @@ function avrgirlIspmkii(chip) {
     frameless: true
   };
 
+  this.signature = new Buffer('AVRISP_MK2');
+
   stk500v2.call(this, options);
 };
 
 util.inherits(avrgirlIspmkii, stk500v2);
 
-avrgirlIspmkii.prototype.verifyProgrammer = function (sig, callback) {
+avrgirlIspmkii.prototype.verifyProgrammer = function (callback) {
   var self = this;
 
   this.getSignature(function (error, data) {
-    self.verifySignature(sig, data, function(error) {
+    self.verifySignature(self.signature, data, function(error) {
       callback(error);
     });
   });
