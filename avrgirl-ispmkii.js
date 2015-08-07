@@ -21,7 +21,6 @@ function avrgirlIspmkii(chip) {
   };
 
   stk500v2.call(this, options);
-
 };
 
 util.inherits(avrgirlIspmkii, stk500v2);
