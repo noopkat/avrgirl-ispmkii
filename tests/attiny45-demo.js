@@ -16,7 +16,7 @@ var sig = new Buffer('AVRISP_MK2');
 avrgirl.on('ready', function() {
   // run demos
   async.series([
-    avrgirl.verifyProgrammer.bind(avrgirl, sig),
+    //avrgirl.verifyProgrammer.bind(avrgirl, sig),
     avrgirl.enterProgrammingMode.bind(avrgirl),
     function hi (callback) {
       avrgirl.getChipSignature(function(error, data) {
