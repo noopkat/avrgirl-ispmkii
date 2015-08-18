@@ -1,22 +1,34 @@
+/*
+
+  HELLO FELLOW HUMAN ELECTRICAL INTERESTED PERSON
+  PLEASE DO NOT RUN THIS EXAMPLE UNLESS YOU'D LIKE TO
+  OVERWRITE THE RANDOM DEVICE YOU MAY HAVE PLUGGED IN.
+
+  THIS IS JUST A HANDY FILE TO HELP YOU SEE CONTEXT OF
+  HOW TO USE THIS SOFTWARE.
+
+  THANK YOU,
+  @NOOPKAT
+
+*/
+
 var AvrgirlIspmkii = require('../avrgirl-ispmkii');
+var chips = require('avrgirl-chips-json');
 var intelhex = require('intel-hex');
 var fs = require('fs');
 var async = require('async');
 
-var attiny45 = require('./attiny45');
-
+var attiny45 = chips.attiny45;
 var avrgirl = new AvrgirlIspmkii(attiny45);
 
 var pr = fs.readFileSync(__dirname + '/hex/pr.hex', {encoding: 'utf8'});
 var ee = fs.readFileSync(__dirname + '/hex/eeprom.hex', {encoding: 'utf8'});
 var prBin = intelhex.parse(pr).data;
 var eeBin = intelhex.parse(ee).data;
-var sig = new Buffer('AVRISP_MK2');
 
 avrgirl.on('ready', function() {
   // run demos
   async.series([
-    //avrgirl.verifyProgrammer.bind(avrgirl, sig),
     avrgirl.enterProgrammingMode.bind(avrgirl),
     function hi (callback) {
       avrgirl.getChipSignature(function(error, data) {
@@ -43,8 +55,8 @@ avrgirl.on('ready', function() {
       });
     },
     avrgirl.eraseChip.bind(avrgirl),
-    avrgirl.writeMem.bind(avrgirl, 'flash', prBin),
-    avrgirl.writeMem.bind(avrgirl, 'eeprom', eeBin),
+    avrgirl.writeFlash.bind(avrgirl, prBin),
+    avrgirl.writeEeprom.bind(avrgirl, eeBin),
     avrgirl.exitProgrammingMode.bind(avrgirl)
     ], function (error) {
       console.log(error);
