@@ -155,7 +155,7 @@ Returns a buffer containing the signature bytes.
 Usage:
 
 ```javascript
-avrgirl.getChipSignature(function(signature) {
+avrgirl.getChipSignature(function(error, signature) {
   console.log(signature);
 });
 ```
