@@ -42,18 +42,6 @@ avrgirl.on('ready', function() {
         callback();
       });
     },
-    function readeeprom (callback) {
-      avrgirl.readEeprom(0x04, function(error, data) {
-        console.log('eeprom response read:', error, data.toString('hex'));
-        callback();
-      });
-    },
-    function readflash (callback) {
-      avrgirl.readFlash(0x04, function(error, data) {
-        console.log('flash response read:', error, data.toString('hex'));
-        callback();
-      });
-    },
     avrgirl.eraseChip.bind(avrgirl),
     avrgirl.writeFlash.bind(avrgirl, prBin),
     avrgirl.writeEeprom.bind(avrgirl, eeBin),
