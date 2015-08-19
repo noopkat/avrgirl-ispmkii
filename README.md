@@ -8,7 +8,25 @@ A NodeJS interface layer for the AVRISP mkII programmer from Atmel®.
 
 ## Installation
 
-`npm install avrgirl-ispmkii`
+### OSX:
+```
+npm install avrgirl-ispmkii
+```
+
+### Linux:
+```
+apt-get install build-essential libudev-dev
+npm install avrgirl-ispmkii
+```
+### Windows:
+Use [Zadig](http://sourceforge.net/projects/libwdi/files/zadig/) to install the WinUSB driver for your USB device.   
+Otherwise you will get weird `LIBUSB_ERROR_NOT_SUPPORTED` errors, oops! 
+
+Then:
+
+```
+npm install avrgirl-ispmkii
+```
 
 ## What is this?
 
