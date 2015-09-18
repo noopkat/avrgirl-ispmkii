@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/noopkat/avrgirl-ispmkii.svg?branch=master)](https://travis-ci.org/noopkat/avrgirl-stk500v2) [![Coverage Status](https://coveralls.io/repos/noopkat/avrgirl-ispmkii/badge.svg?branch=master&service=github)](https://coveralls.io/github/noopkat/avrgirl-avrispmkii?branch=master) 
+[![Build Status](https://travis-ci.org/noopkat/avrgirl-ispmkii.svg?branch=master)](https://travis-ci.org/noopkat/avrgirl-stk500v2) [![Coverage Status](https://coveralls.io/repos/noopkat/avrgirl-ispmkii/badge.svg?branch=master&service=github)](https://coveralls.io/github/noopkat/avrgirl-avrispmkii?branch=master)
 
 # avrgirl-ispmkii
 
@@ -19,8 +19,8 @@ apt-get install build-essential libudev-dev
 npm install avrgirl-ispmkii
 ```
 ### Windows:
-Use [Zadig](http://sourceforge.net/projects/libwdi/files/zadig/) to install the WinUSB driver for your USB device.   
-Otherwise you will get weird `LIBUSB_ERROR_NOT_SUPPORTED` errors, oops! 
+Use [Zadig](http://sourceforge.net/projects/libwdi/files/zadig/) to install the WinUSB driver for your USB device.
+Otherwise you will get weird `LIBUSB_ERROR_NOT_SUPPORTED` errors, oops!
 
 Then:
 
@@ -30,7 +30,7 @@ npm install avrgirl-ispmkii
 
 ## What is this?
 
-Known for its rather awkward enclosure/case, the AVRISP mkII programmer is a great little device to have around.  
+Known for its rather awkward enclosure/case, the AVRISP mkII programmer is a great little device to have around.
 Flashing and reading chips with it is a relatively easy affair. It follows the STK500v2 protocol.
 
 ![avrispmkii](http://i.imgur.com/IPg3VaM.jpg)
@@ -74,73 +74,73 @@ avrgirl.on('ready', function() {
 
 The chip property is an object that follows a strict format / signature. It specifies the configuration properties of the microchip you are using.  You'll need to know and supply this configuration. You can find this from AVR Studio, the [avrgirl-chips-json package](https://www.npmjs.com/package/avrgirl-chips-json), or use the [AVRDUDE conf API](avrdude-conf.herokuapp.com). Pull requests to the [avrgirl-chips-json repo](https://github.com/noopkat/avrgirl-chips-json) with additional chips is most welcome.
 
-Here is the signature, provided as an example of the ATtiny45:
+Here is the signature, provided as an example of the ATtiny85:
+
 
 ```javascript
-var attiny45 = {
-  sig: [0x1E, 0x92, 0x06],
-  timeout: 0xC8,
-  stabDelay: 0x64,
-  cmdexeDelay: 0x19,
-  syncLoops: 0x20,
-  byteDelay: 0x00,
-  pollIndex: 0x03,
-  pollValue: 0x53,
-  preDelay: 0x01,
-  postDelay: 0x01,
-  pollMethod: 0x01,
-  poll1: 0x00,
-  poll2: 0x00,
-  pgmEnable: [0xAC, 0x53, 0x00, 0x00],
-  flash: {
-    paged: true,
-    mode: 0xC1,
-    delay: 6,
-    size: 4096,
-    pageSize: 64,
-    pages: 64,
-    addressOffset: 1,
-    write: [0x40, 0x4C, 0x20],
-    read: [0x20, 0x00, 0x00],
-    poll1: 0xFF,
-    poll2: 0xFF
+var attiny85 = {
+  "name": "ATtiny85",
+  "timeout": 200,
+  "stabDelay": 100,
+  "cmdexeDelay": 25,
+  "syncLoops": 32,
+  "byteDelay": 0,
+  "pollIndex": 3,
+  "pollValue": 83,
+  "preDelay": 1,
+  "postDelay": 1,
+  "pgmEnable": [172, 83, 0, 0],
+  "erase": {
+    "cmd": [172, 128, 0, 0],
+    "delay": 45,
+    "pollMethod": 1
   },
-  eeprom: {
-    paged: true,
-    mode: 0xC1,
-    delay: 6,
-    size: 256,
-    pageSize: 4,
-    pages: 64,
-    addressOffset: 0,
-    write: [0xC1, 0xC2, 0xA0],
-    read: [0xA0, 0x00, 0x00],
-    poll1: 0xFF,
-    poll2: 0xFF
+  "flash": {
+    "write": [64, 76, 0],
+    "read": [32, 0, 0],
+    "mode": 65,
+    "blockSize": 64,
+    "delay": 10,
+    "poll2": 255,
+    "poll1": 255,
+    "size": 8192,
+    "pageSize": 64,
+    "pages": 128,
+    "addressOffset": 0
   },
-  erase: {
-    delay: 10,
-    cmd: [0xAC, 0x80, 0x00, 0x00]
+  "eeprom": {
+    "write": [193, 194, 0],
+    "read": [160, 0, 0],
+    "mode": 65,
+    "blockSize": 4,
+    "delay": 5,
+    "poll2": 255,
+    "poll1": 255,
+    "size": 512,
+    "pageSize": 4,
+    "pages": 128,
+    "addressOffset": 0
   },
-  signature: {
-    size: 3,
-    startAddress: 0x00,
-    read: [0x30, 0x00, 0x00, 0x00]
+  "sig": [30, 147, 11],
+  "signature": {
+    "size": 3,
+    "startAddress": 0,
+    "read": [48, 0, 0, 0]
   },
-  fuses: {
-    startAddress: 0x00,
-    write: {
-      low: [0xAC, 0xA0, 0x00, 0x62],
-      high: [0xAC, 0xA8, 0x00, 0xDF],
-      ext: [0xAC, 0xA4, 0x00, 0xFF]
+  "fuses": {
+    "startAddress": 0,
+    "write": {
+      "low": [172, 160, 0, 0],
+      "high": [172, 168, 0, 0],
+      "ext": [172, 164, 0, 0]
     },
-    read: {
-      low: [0x50, 0x00, 0x00, 0x00],
-      high: [0x58, 0x08, 0x00, 0x00],
-      ext: [0x50, 0x08, 0x00, 0x00]
+    "read": {
+      "low": [80, 0, 0, 0],
+      "high": [88, 8, 0, 0],
+      "ext": [80, 8, 0, 0]
     }
   }
-};
+}
 ```
 
 ## Available methods
@@ -148,7 +148,7 @@ var attiny45 = {
 
 ### getChipSignature
 
-Gets the signature of the microchip. 
+Gets the signature of the microchip.
 
 Returns a buffer containing the signature bytes.
 
@@ -186,7 +186,7 @@ avrgirl.exitProgrammingMode(function(error) {
 
 Erases both the flash and EEPROM memories on the microchip. Good practice to do before flashing any new data.
 
-💣💣💣  Literally erases **everything** please be careful 💣💣💣  
+💣💣💣  Literally erases **everything** please be careful 💣💣💣
 
 Returns a null error upon callback if successful.
 
@@ -223,7 +223,7 @@ avrgirl.setParameter(0x94, 0x00, function(error) {
 
 ### writeFlash
 
-Writes a buffer to the flash memory of the microchip. Provide a buffer and a callback respectively.  
+Writes a buffer to the flash memory of the microchip. Provide a buffer and a callback respectively.
 Protip: use the package [intel-hex](https://www.npmjs.com/package/intel-hex) if you need to parse a .hex file into a buffer for this method. See the example.
 
 Returns a null error upon callback if successful.
@@ -239,7 +239,7 @@ avrgirl.writeFlash(buffer, function(error) {
 
 ### writeEeprom
 
-Writes a buffer to the eeprom memory of the microchip. Provide a buffer and a callback respectively.  
+Writes a buffer to the eeprom memory of the microchip. Provide a buffer and a callback respectively.
 Protip: use the package [intel-hex](https://www.npmjs.com/package/intel-hex) if you need to parse a .hex file into a buffer for this method. See the example.
 
 Returns a null error upon callback if successful.
@@ -255,7 +255,7 @@ avrgirl.writeEeprom(buffer, function(error) {
 
 ### readFlash
 
-Reads a specified length of flash memory from the microchip. Takes a length integer (or hex) for the number of bytes to read, and a callback as the arguments, respectively. 
+Reads a specified length of flash memory from the microchip. Takes a length integer (or hex) for the number of bytes to read, and a callback as the arguments, respectively.
 
 Returns a null error and a buffer of the read bytes upon callback if successful.
 
@@ -269,7 +269,7 @@ avrgirl.readFlash(64, function(error, data) {
 
 ### readEeprom
 
-Reads a specified length of flash memory from the microchip. Takes a length integer (or hex) for the number of bytes to read, and a callback as the arguments, respectively. 
+Reads a specified length of flash memory from the microchip. Takes a length integer (or hex) for the number of bytes to read, and a callback as the arguments, respectively.
 
 Returns a null error and a buffer of the read bytes upon callback if successful.
 
@@ -311,10 +311,10 @@ avrgirl.readFuse('low', function(error, data) {
 
 ### writeFuse
 
-💣💣💣 ***OMG, please be careful with this.*** 💣💣💣  
+💣💣💣 ***OMG, please be careful with this.*** 💣💣💣
 please please please.
 
-You can brick your chip if you do not know exactly what you're doing. Use an online fuse calculator first, and triple check before running this method. 
+You can brick your chip if you do not know exactly what you're doing. Use an online fuse calculator first, and triple check before running this method.
 
 I accept no responsibility for bricked chips 💀😱😭
 
@@ -323,7 +323,7 @@ Takes a fuse key string, a value to set it to, and a callback.
 Usage:
 
 ```javascript
-// ********* 
+// *********
 // please do not run this code unless you're sure that 0x62 is a good idea for your chip ;___;
 // *********
 avrgirl.writeFuse('low', 0x62, function(error) {
@@ -331,7 +331,7 @@ avrgirl.writeFuse('low', 0x62, function(error) {
   console.log(error);
 });
 ```
----  
+---
 
 ## Other methods
 
