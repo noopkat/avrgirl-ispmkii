@@ -29,7 +29,7 @@
   "dependencies": {
     "async": "^1.4.0",
     "avrgirl-chips-json": "^1.0.0",
-    "avrgirl-stk500v2": "^1.0.1",
+    "avrgirl-stk500v2": "^1.0.3",
     "intel-hex": "^0.1.1",
     "usb": "^1.0.6"
   },
