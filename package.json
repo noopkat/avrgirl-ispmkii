@@ -31,7 +31,7 @@
     "avrgirl-chips-json": "^2.0.0",
     "avrgirl-stk500v2": "^1.0.3",
     "intel-hex": "^0.1.1",
-    "usb": "^1.0.6"
+    "usb": "^1.1.0"
   },
   "devDependencies": {
     "istanbul": "^0.4.0",
