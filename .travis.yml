@@ -10,6 +10,7 @@ node_js:
 addons:
   apt:
     packages:
+    - gcc-4.8
     - build-essential
     - libudev-dev
 
