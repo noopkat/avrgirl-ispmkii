@@ -1,6 +1,6 @@
 {
   "name": "avrgirl-ispmkii",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "avrgirl wrapper for flashing chips via the AVRISPmkII programmer",
   "main": "avrgirl-ispmkii.js",
   "scripts": {
