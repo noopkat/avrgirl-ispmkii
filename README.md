@@ -145,6 +145,51 @@ var attiny85 = {
 
 ## Available methods
 
+### quickFlash
+
+This is a convenient, fast way to write to the flash memory of the microchip.
+
+Underneath, this method is doing the following:
+
+1. Enters programming mode 
+2. Calls writeFlash and writes to the flash memory on the chip
+3. Exits programming mode and calls back
+
+It does not erase the chip before writing.
+
+Provide a filepath string, and a callback, respectively. Alternatively, you may also provide a pre-parsed Buffer in in place of the filepath.
+
+Returns a null error upon callback if successful.
+
+```javascript
+avrgirl.quickFlash('Blink.cpp.hex', function(error) {
+  console.log(error);
+});
+```
+
+### quickEeprom
+
+This is a convenient, fast way to write to the eeprom memory of the microchip.
+
+Underneath, this method is doing the following:
+
+1. Enters programming mode 
+2. Calls writeEeprom and writes to the eeprom memory on the chip
+3. Exits programming mode and calls back
+
+It does not erase the chip before writing.
+
+Provide a filepath string, and a callback, respectively. Alternatively, you may also provide a pre-parsed Buffer in in place of the filepath.
+
+Returns a null error upon callback if successful.
+
+```javascript
+avrgirl.quickEeprom('myEeprom.cpp.hex', function(error) {
+  console.log(error);
+});
+```
+
+
 
 ### getChipSignature
 
@@ -223,15 +268,11 @@ avrgirl.setParameter(0x94, 0x00, function(error) {
 
 ### writeFlash
 
-Writes a buffer to the flash memory of the microchip. Provide a buffer and a callback respectively.
-Protip: use the package [intel-hex](https://www.npmjs.com/package/intel-hex) if you need to parse a .hex file into a buffer for this method. See the example.
+Writes a buffer to the flash memory of the microchip. Provide a filepath string, and a callback, respectively. Alternatively, you may also provide a pre-parsed Buffer in in place of the filepath.
 
 Returns a null error upon callback if successful.
 
 ```javascript
-var intelhex = require('intel-hex');
-var buffer = fs.readFileSync('Blink.cpp.hex', {encoding: 'utf8'});
-
 avrgirl.writeFlash(buffer, function(error) {
   console.log(error);
 });
@@ -239,15 +280,11 @@ avrgirl.writeFlash(buffer, function(error) {
 
 ### writeEeprom
 
-Writes a buffer to the eeprom memory of the microchip. Provide a buffer and a callback respectively.
-Protip: use the package [intel-hex](https://www.npmjs.com/package/intel-hex) if you need to parse a .hex file into a buffer for this method. See the example.
+Writes a buffer to the eeprom memory of the microchip. Provide a filepath string, and a callback, respectively. Alternatively, you may also provide a pre-parsed Buffer in in place of the filepath.
 
 Returns a null error upon callback if successful.
 
 ```javascript
-var intelhex = require('intel-hex');
-var buffer = fs.readFileSync('myEeprom.cpp.hex', {encoding: 'utf8'});
-
 avrgirl.writeEeprom(buffer, function(error) {
   console.log(error);
 });
