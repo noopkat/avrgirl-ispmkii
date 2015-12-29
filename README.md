@@ -8,6 +8,8 @@ A NodeJS interface layer for the AVRISP mkII programmer from Atmel®.
 
 ## Installation
 
+Firstly, [download and install NodeJS](https://nodejs.org/en/download/). Then open up your favourite Terminal program to type the following for your operating system of choice:
+
 ### OSX:
 ```
 npm install avrgirl-ispmkii
