@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/noopkat/avrgirl-ispmkii#readme",
   "dependencies": {
-    "async": "^1.4.0",
+    "async": "^2.1.5",
     "avrgirl-chips-json": "^2.0.0",
     "avrgirl-stk500v2": "^1.1.0",
     "intel-hex": "^0.1.1",
